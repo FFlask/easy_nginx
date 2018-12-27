@@ -1,0 +1,41 @@
+{% extends 'admin_base.html' %}
+{% block title %} 评论管理 {% endblock %}
+{% block contnet %}
+    <h1>评论管理</h1>
+    <hr>
+    <table border="1">
+    <thead>
+        <tr>
+            <td>ID</td>
+            <td>所属帖子</td>
+            <td>评论者</td>
+            <td>被评论者</td>
+            <td>内容</td>
+            <td>创建时间</td>
+            <td>顶级评论</td>
+            <td>可读</td>
+            <td>操作</td>
+        </tr>
+    </thead>
+    {% for comment in comments %}
+        <tr>
+            <td>{{ comment.id }}</td>
+            <td>{{ comment.post.title }}</td>
+            <td>{{ comment.user.username }}</td>
+            {% if comment.is_top_comment %}
+                <td>顶级评论</td>
+                {% else %}
+                <td>{{ comment.parent_comment.user.username }}</td>
+            {% endif %}
+            <td>{{ comment.body }}</td>
+            <td>{{ comment.create_time }}</td>
+            <td>{{ comment.is_top_comment }}</td>
+            <td>{{ comment.can_seen }}</td>
+            <td><a href="{{ url_for('bbs_admin.edit_manager_comment',comment_id=comment.id) }}">修改</a>|<a href="#">删除</a></td>
+        </tr>
+    {% endfor %}
+    </table>
+    《-{% for p in pagination.iter_pages() %}
+        <a href="{{ url_for('bbs_admin.manager_comment',page= p) }}">{{ p }}</a>
+    {% endfor %}-》
+{% endblock %}

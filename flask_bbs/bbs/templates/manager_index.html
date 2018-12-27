@@ -1,0 +1,47 @@
+{% extends 'admin_base.html' %}
+{% block title %} 首页管理 {% endblock %}
+{% block contnet %}
+    <h1>首页管理</h1>
+    <h3>巨幕轮播图</h3>
+    <form method="POST" action="{{ url_for('bbs_admin.manager_index') }}"  enctype="multipart/form-data">
+    {{ edit_manager_jumborn_img_form.hidden_tag() }}
+    {{ edit_manager_jumborn_img_form.img }}<br>
+        {{ edit_manager_jumborn_img_form.description.label }}{{ edit_manager_jumborn_img_form.description }}
+    {{ edit_manager_jumborn_img_form.submmit}}
+        {{ edit_manager_jumborn_img_form.errors }}
+    </form><br>
+    <table border="1">
+        <thead>
+            <tr>
+                <td>序号</td>
+                <td>路径</td>
+                <td>简介</td>
+            </tr>
+        </thead>
+        {% for jumborn_img in jumborn_imgs %}
+            <tr>
+                <td>{{ jumborn_img.id }}</td>
+                <td>{{ jumborn_img.img }}</td>
+                <td>{{ jumborn_img.description }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <h3>明星水友</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <td>序号</td>
+                <td>用户</td>
+                <td>简介</td>
+            </tr>
+        </thead>
+    {% for user in star_users %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.description }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'admin_base.html' %}
+{% block title %} 用户修改 {% endblock %}
+{% block contnet %}
+    <h1>用户修改</h1>
+    <hr>
+    <form method="POST" action="{{ url_for('bbs_admin.edit_manager_user',user_id=user1.id) }}" >
+    {{ edit_manager_user_form.hidden_tag() }}
+    <table border="1">
+    <thead>
+        <tr>
+            <td>ID</td>
+            <td>用户名</td>
+            <td>邮箱</td>
+            <td>密码</td>
+            <td>描述</td>
+            <td>角色</td>
+            <td>明星用户</td>
+            <td>操作</td>
+        </tr>
+    </thead>
+        <tr>
+            <td>{{ user1.id }}</td>
+            <td>{{ user1.username }}</td>
+            <td>{{ user1.email }}</td>
+            <td>{{ user1.password }}</td>
+            <td>{{ edit_manager_user_form.description }}</td>
+            <td>{{ edit_manager_user_form.role }}</td>
+            <td>{{ edit_manager_user_form.is_star_user }}</td>
+            <td>{{ edit_manager_user_form.submmit }}|<a href="{{ url_for('bbs_admin.manager_user') }}">取消</a></td>
+        </tr>
+    </table>
+    </form>
+{% endblock %}

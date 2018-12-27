@@ -1,0 +1,41 @@
+{% extends 'admin_base.html' %}
+{% block title %} 用户管理 {% endblock %}
+{% block contnet %}
+    <h1>用户管理</h1>
+    <hr>
+    <table border="1">
+    <thead>
+        <tr>
+            <td>ID</td>
+            <td>用户名</td>
+            <td>邮箱</td>
+            <td>密码</td>
+            <td>描述</td>
+            <td>角色</td>
+            <td>权限</td>
+            <td>创建时间</td>
+            <td>最后登陆</td>
+            <td>明星用户</td>
+            <td>操作</td>
+        </tr>
+    </thead>
+    {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.password }}</td>
+            <td>{{ user.description }}</td>
+            <td>{{ user.role.role_name }}</td>
+            <td>{{ user.role.permissions }}</td>
+            <td>{{ user.create_time }}</td>
+            <td>{{ user.last_seen }}</td>
+            <td>{{ user.is_star_user }}</td>
+            <td><a href="{{ url_for('bbs_admin.edit_manager_user',user_id=user.id) }}">修改</a>|<a href="#">删除</a></td>
+        </tr>
+    {% endfor %}
+    </table>
+    《-{% for p in pagination.iter_pages() %}
+        <a href="{{ url_for('bbs_admin.manager_user',page= p) }}">{{ p }}</a>
+    {% endfor %}-》
+{% endblock %}

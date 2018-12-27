@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %} 帖子 {% endblock %}
+{% block contnet %}
+
+
+    {% for post in posts %}
+        {% if post.can_seen %}
+
+        <div class="media">
+      <div class="media-body">
+        <h4 class="media-heading"><a href="#"><span class="glyphicon glyphicon-flag"></span>{{ post.title }}</a></h4>
+        <h5><a href="#">{{ post.body }}</a></h5>
+
+      </div>
+            <div class="media-right">
+            <a href="#">
+          <img class="media-object" src="/static/uploads/{{ post.user.head_img }}" alt="11111">
+        </a>
+      </div>
+              <div class="media-bottom">
+          <div class="btn-group" role="group">
+      <button type="button" class="btn btn-default" id="post_zan{{ post.id }}" onclick="dian_post_zan({{ post.id }})"><a href="#"><span class="glyphicon glyphicon-thumbs-up"></span>赞({{ post.zancai | length }})</a></button>
+      <button type="button" class="btn btn-default"><a href="{{ url_for('bbs1.comment',post_id=post.id) }}"><span class="glyphicon glyphicon-pencil"></span>评论({{ post.comment | length }} )</a></button>
+       <button type="button" class="btn btn-default"><a href="{{ url_for('bbs1.userprofile',username=post.user.username) }}"><span class="glyphicon glyphicon-user"></span>{{ post.user.username }}</a></button>
+       <button type="button" class="btn btn-default"><a href="#"><span class="glyphicon glyphicon-time"></span>{{ post.create_time }}</a></button>
+        </div>
+
+      </div>
+    </div>
+    <hr>
+        {% endif %}
+    {% endfor %}
+{#    页码展示#}
+        《-{% for p in pagination.iter_pages() %}
+        <a href="{{ url_for('bbs1.post',page= p) }}">{{ p }}</a>
+    {% endfor %}-》
+    <script>
+    function dian_post_zan(post_id) {
+        var edit_child_comment = document.getElementById('post_zan'+post_id);
+        // 新建XMLHttpRequest对象
+        var req = new XMLHttpRequest();
+        // 状态发生变化时，函数被回调
+        req.onreadystatechange=function () {
+            //状态码为4代表请求完成
+            if (req.readyState==4&&req.status==200) {
+                data = req.responseText;
+                data = JSON.parse(data);
+                location.reload();
+            }
+        };
+        //post方式建立连接
+        req.open('post','http://127.0.0.1:5000/zancai',true);
+        //post请求的编码方式，这是浏览器的原生 form 表单的默认编码方式
+        req.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        //发送请求
+        req.send("post_or_comment="+1+"&post_id="+post_id+"&zan_or_cai="+1);
+    }
+    </script>
+{% endblock %}

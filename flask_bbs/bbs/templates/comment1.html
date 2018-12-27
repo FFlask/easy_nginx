@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% block title %} 评论 {% endblock %}
+{% block contnet %}
+    <div class="row">
+    <div class="col-lg-8" style="font-size: 20px">{{ post1.title }}</div>
+    <div class="col-lg-4">
+        <a href="#" class="btn btn-default btn-xs" role="button">只看楼主</a>
+        <a href="#" class="btn btn-default btn-xs" role="button">收藏</a>
+        <a href="#" class="btn btn-default btn-xs" role="button">回复</a>
+    </div>
+    </div>
+<table border="1">
+    <tr style="height: 250px">
+        <td rowspan="2" style="width: 100px;padding-left: 18px;padding-top: 10px" valign="top">
+            <img src="/static/uploads/{{ post1.user.head_img }}" style="height: 60px;width: 60px">
+            <br><a href="{{ url_for('bbs1.userprofile',username=post1.user.username) }}">{{ post1.user.username }}</a>
+        </td>
+        <td style="width: 500px;padding-left: 10px;padding-top: 10px" valign="top">{{ post1.body }}</td>
+    </tr>
+    <tr>
+        <td style="text-align: right">1楼 &nbsp;&nbsp;{{ post1.create_time }}&nbsp;&nbsp;<a href="#">评论</a></td>
+    </tr>
+ {% for comment in comments %}
+     {% if comment.child_comment %}
+                <tr style="height: 150px">
+        <td rowspan="3" style="width: 100px;padding-left: 18px;padding-top: 10px" valign="top">
+            <img src="/static/uploads/{{ comment.user.head_img }}" style="height: 60px;width: 60px">
+            <br><a href="{{ url_for('bbs1.userprofile',username=comment.user.username) }}">{{ comment.user.username }}</a>
+        </td>
+        <td style="width: 500px;padding-left: 10px;padding-top: 10px" valign="top">{{ comment.body }}</td>
+    </tr>
+         <tr>
+             <td>
+
+         {% for comment1 in all_comments %}
+         {% if comment1.top_comment().id==comment.id %}
+             <table style="width: 500px" border="1">
+             <tr>
+             <td rowspan="2" align="center"><img src="/static/uploads/{{ comment1.user.head_img }}" style="height: 30px;width: 30px"></td>
+             <td>
+            <a href="#">{{ comment1.user.username }}</a>&nbsp;回复&nbsp;
+             <a href="#">{{ comment1.parent_comment.user.username }}</a>&nbsp;&nbsp;
+             {{ comment1.body }}</td>
+             </tr>
+             <tr>
+                <td align="right">{{ comment1.create_time }}&nbsp;&nbsp;<a href="#">回复</a></td>
+             </tr>
+             </table>
+         {% endif %}
+
+         {% endfor %}
+
+         </td>
+         </tr>
+    <tr>
+        <td style="text-align: right">{{ comment.id+1 }}楼 &nbsp;&nbsp;{{ comment.create_time }}&nbsp;&nbsp;<a href="#">回复</a></td>
+    </tr>
+     {% else %}
+         <tr style="height: 150px">
+        <td rowspan="2" style="width: 100px;padding-left: 18px;padding-top: 10px" valign="top">
+            <img src="/static/uploads/{{ comment.user.head_img }}" style="height: 60px;width: 60px">
+            <br><a href="{{ url_for('bbs1.userprofile',username=comment.user.username) }}">{{ comment.user.username }}</a>
+        </td>
+        <td style="width: 500px;padding-left: 10px;padding-top: 10px" valign="top">{{ comment.body }}</td>
+    </tr>
+    <tr>
+        <td style="text-align: right">{{ comment.id+1 }}楼 &nbsp;&nbsp;{{ comment.create_time }}&nbsp;&nbsp;<a href="#">回复</a></td>
+    </tr>
+     {% endif %}
+{% endfor %}
+</table>
+
+
+<hr>
+
+
+ <hr>
+    {% if current_user.is_authenticated %}
+    <h2>发表评论</h2>
+    {% from '_filed.html' import render_field %}
+<form method="POST" action="{{ url_for('bbs1.comment',post_id=post1.id) }}" >
+  {{ edit_comment.hidden_tag() }}
+  <table>
+    {{ render_field(edit_comment.body) }}
+  </table>
+  {{ edit_comment.submmit() }}
+</form>
+    {% endif %}
+ <script>
+    function send_child_comment(post_id,comment_id) {
+        var edit_child_comment = document.getElementById('edit_child_comment'+comment_id);
+        // 新建XMLHttpRequest对象
+        var req = new XMLHttpRequest();
+        // 状态发生变化时，函数被回调
+        req.onreadystatechange=function () {
+            //状态码为4代表请求完成
+            if (req.readyState==4&&req.status==200) {
+                data = req.responseText;
+                data = JSON.parse(data);
+                location.reload();
+            }
+        };
+        //post方式建立连接
+        req.open('post','http://127.0.0.1:5000/comment/'+post_id+'/edit_child_comment',true);
+        //post请求的编码方式，这是浏览器的原生 form 表单的默认编码方式
+        req.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        //发送请求
+        req.send("comment_id="+comment_id+"&edit_child_comment="+edit_child_comment.value);
+    }
+
+    function send_child_child_comment(post_id,comment_id) {
+        var edit_child_comment = document.getElementById('child_child_comment'+comment_id);
+        // 新建XMLHttpRequest对象
+        var req = new XMLHttpRequest();
+        // 状态发生变化时，函数被回调
+        req.onreadystatechange=function () {
+            //状态码为4代表请求完成
+            if (req.readyState==4&&req.status==200) {
+                data = req.responseText;
+                data = JSON.parse(data);
+                location.reload();
+            }
+        };
+        //post方式建立连接
+        req.open('post','http://127.0.0.1:5000/comment/'+post_id+'/edit_child_comment',true);
+        //post请求的编码方式，这是浏览器的原生 form 表单的默认编码方式
+        req.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        //发送请求
+        req.send("comment_id="+comment_id+"&edit_child_comment="+edit_child_comment.value);
+    }
+ </script>
+{% endblock %}

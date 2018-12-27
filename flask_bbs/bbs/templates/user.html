@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %} {{ current_user.username }}的主页 {% endblock %}
+{% block contnet %}
+<h2>{{ user1.username }}的主页</h2>
+{% if current_user.username==user1.username %}
+<hr>
+    <a href="{{ url_for('bbs1.userprofile',username=current_user.username) }}">我的信息</a>&nbsp;&nbsp;
+    <a href="{{ url_for('bbs1.user_post',username=current_user.username) }}">我的帖子</a>&nbsp;&nbsp;
+    <a href="{{ url_for('bbs1.user_comment',username=current_user.username) }}">我的评论</a>&nbsp;&nbsp;
+<hr>
+{% else %}
+    <hr>
+    <a href="{{ url_for('bbs1.userprofile',username=user1.username) }}">{{ user1.username }}信息</a>&nbsp;&nbsp;
+    <a href="{{ url_for('bbs1.user_post',username=user1.username) }}">{{ user1.username }}帖子</a>&nbsp;&nbsp;
+    <a href="#">{{ user1.username }}评论</a>&nbsp;&nbsp;
+<hr>
+{% endif %}
+{% endblock %}

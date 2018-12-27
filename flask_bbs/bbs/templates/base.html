@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <script src="/static/bootstrap/js/jquery-3.3.1.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.js"></script>
+    <link href="/static/css/css.css" rel="stylesheet">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body onload="end_load()">
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">BBS</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="{{ url_for('bbs1.index') }}">首页</a></li>
+        <li><a href="{{ url_for('bbs1.post') }}">看帖</a></li>
+        <li><a href="#">精品</a></li>
+      </ul>
+      <form class="navbar-form navbar-left">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="搜帖子标题">
+        </div>
+        <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
+      </form>
+        {% if current_user.is_authenticated %}
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="{{ url_for('bbs1.signin',username=current_user.username) }}" id="signin"><span class="glyphicon glyphicon-star-empty"></span>签到</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ current_user.username }} <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="{{ url_for('bbs1.edit_post') }}"><span class="glyphicon glyphicon-pencil"></span>发帖</a></li>
+              <li><a href="{{ url_for('bbs1.userprofile',username=current_user.username) }}"><span class="glyphicon glyphicon-home"></span>我的主页</a></li>
+              <li>
+                  {% if current_user.is_manager() %}
+                      <a href="{{ url_for('bbs_admin.admin') }}"><span class="glyphicon glyphicon-cog"></span>后台管理</a>
+                  {% endif %}
+              </li>
+            <li role="separator" class="divider"></li>
+            <li><a href="{{ url_for('bbs1.logout') }}">注销</a></li>
+          </ul>
+        </li>
+      </ul>
+        {% else %}
+               <ul class="nav navbar-nav navbar-right">
+        <li><a href="{{ url_for('bbs1.register') }}">注册</a></li>
+        <li><a href="{{ url_for('bbs1.login') }}">登陆</a></li>
+      </ul>
+        {% endif %}
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+<div class="container">
+    <div class="col-sm-7 col-sm-offset-1">
+        {% block contnet %}
+        {% endblock %}
+    </div>
+    <div class="col-sm-3 col-sm-offset-1">
+        <h3>聊天框</h3>
+        <div class="talk-box" id="chat_window">
+
+        </div>
+        <div class="advert">
+            <div class="input-group">
+                  <input type="text"  class="form-control" placeholder="" id="send_msg">
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" id="btn_send">发送消息</button>
+                  </span>
+                </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('.navbar').find('a').each(function () {
+            if (this.href == document.location.href) {
+                $(this).parent().addClass('active'); // this.className = 'active';
+            }else {
+                $(this).parent().removeClass('active');
+            }
+
+
+        });
+        $('.nav-tabs').find('a').each(function () {
+            if (this.href == document.location.href) {
+                $(this).parent().addClass('active'); // this.className = 'active';
+            }else {
+                $(this).parent().removeClass('active');
+            }
+
+
+        });
+
+
+    var ws_url="ws://127.0.0.1:5000/ws/";
+    var ws =null;
+    function end_load() {
+
+        // 新建XMLHttpRequest对象
+        var req = new XMLHttpRequest();
+        var signin = document.getElementById('signin');
+        // 状态发生变化时，函数被回调
+        req.onreadystatechange=function () {
+            //状态码为4代表请求完成
+            if (req.readyState==4&&req.status==200) {
+                data = req.responseText;
+                data = JSON.parse(data);
+                if (data['status'] == false){
+                    signin.innerText = "已签到("+data['sign_sum']+"天)";
+                }
+            }
+        };
+        //post方式建立连接
+        req.open('post','http://127.0.0.1:5000/signin/{{ current_user.username }}',true);
+        //post请求的编码方式，这是浏览器的原生 form 表单的默认编码方式
+        req.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        //发送请求
+        req.send('11');
+
+
+        var username = "{{ current_user.username }}";
+        ws = new WebSocket(ws_url+username);
+        ws.onmessage=function(serv_msg){
+            msg=JSON.parse(serv_msg.data);
+             //console.log(serv_msg.data);
+            create_chart('y',msg)}
+    }
+
+    function create_chart(self,content) {
+        if (self == "w"){
+            self = "right";
+            var spantag = document.createElement("span");
+            spantag.innerText= content.send_msg;
+            var spantag1 = document.createElement("span");
+            spantag1.innerText=':我';
+        }else{
+            self = "left";
+            var spantag = document.createElement("span");
+            spantag.innerText=content.send_user+':';
+
+            var spantag1 = document.createElement("span");
+            spantag1.innerText=content.send_msg;
+
+        }
+        var divtag = document.createElement("div");
+        divtag.style="text-align:"+self;
+        divtag.appendChild(spantag);
+        divtag.appendChild(spantag1);
+        var char_window = document.getElementById('chat_window');
+        char_window.appendChild(divtag);
+
+    }
+    document.getElementById("btn_send").addEventListener("click",function () {
+
+        var send_msg=document.getElementById("send_msg");
+        ws.send(send_msg.value);
+
+        var s_msg = {send_msg:send_msg.value};
+        create_chart('w',s_msg);
+        send_msg.value='';
+    })
+
+
+</script>
+</body>
+</html>

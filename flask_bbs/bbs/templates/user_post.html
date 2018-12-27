@@ -1,0 +1,23 @@
+{% extends 'base_user.html' %}
+{% block title %} {{ user1.username }}的帖子 {% endblock %}
+{% block contnet %}
+    {{ super() }}
+    <table border="1" class="table table-hover">
+        <thead>
+            <tr>
+                <td>标题</td>
+                <td>日期</td>
+            </tr>
+        </thead>
+        {% for post in post1 %}
+        <tr>
+            <td><a href="{{ url_for('bbs1.comment',post_id=post.id) }}">{{ post.title }}</a>--评论({{ post.comment|length }})</td>
+            <td>{{ post.create_time }}</td>
+        </tr>
+        <br>
+    {% endfor %}
+     </table>
+        《-{% for p in pagination.iter_pages() %}
+        <a href="{{ url_for('bbs1.user_post',username=user1.username) }}">{{ p }}</a>
+    {% endfor %}-》
+{% endblock %}
