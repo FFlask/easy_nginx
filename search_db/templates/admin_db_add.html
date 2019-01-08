@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="col-sm-6 col-sm-offset-3">
+<ul class="nav nav-tabs nav-justified">
+ <li role="presentation" class="active"><a href="#">数据库管理</a></li>
+  <li role="presentation"><a href="#">用户管理</a></li>
+  <li role="presentation"><a href="{{ url_for('search_db') }}">返回查询</a></li>
+</ul>
+<ul class="nav nav-pills nav-justified">
+  <li role="presentation" ><a href="{{ url_for('admin_db_query') }}">查</a></li>
+  <li role="presentation" class="active"><a href="{{ url_for('admin_db_add') }}">增</a></li>
+  <li role="presentation"><a href="#">改</a></li>
+    <li role="presentation"><a href="#">删</a></li>
+</ul>
+<hr>
+    <div class="jumbotron">
+            <h4>新增数据库说明</h4>
+            <ul>
+                <li>本地数据库名必须为search_db</li>
+                <li>新增表名必须与数据库中表名完全一致</li>
+                <li>列名至少要包含username,password,email</li>
+            </ul>
+        </div>
+    <div class="col-sm-10 col-sm-offset-1">
+        <form method="POST" action="{{ url_for('admin_db_add') }}" >
+        {{ db_add_form.hidden_tag() }}
+        {{ db_add_form.table_name }}<br>
+        {{ db_add_form.table_src }}<br>
+        {{ db_add_form.submmit }}
+    </form>
+    </div>
+</div>
+</body>
+</html>

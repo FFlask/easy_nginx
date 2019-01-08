@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="col-sm-6 col-sm-offset-3">
+    <h2>登陆</h2><br>
+    <form method="POST" action="{{ url_for('admin_db_add') }}" >
+        {{ login_form.hidden_tag() }}
+        {{ login_form.username }}<br>
+        {{ login_form.password }}<br>
+        {{ login_form.verify_code }}<br>
+        {{ login_form.submmit }}
+    </form>
+    <div>
+    {% for msg in get_flashed_messages() %}
+        {{ msg }}
+    {% endfor %}
+    </div>
+</div>
+
+</body>
+</html>

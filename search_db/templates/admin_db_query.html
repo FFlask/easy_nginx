@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="col-sm-6 col-sm-offset-3">
+<ul class="nav nav-tabs nav-justified">
+ <li role="presentation" class="active"><a href="#">数据库管理</a></li>
+  <li role="presentation"><a href="#">用户管理</a></li>
+  <li role="presentation"><a href="{{ url_for('search_db') }}">返回查询</a></li>
+</ul>
+<ul class="nav nav-pills nav-justified">
+  <li role="presentation" class="active"><a href="{{ url_for('admin_db_query') }}">查</a></li>
+  <li role="presentation"><a href="{{ url_for('admin_db_add') }}">增</a></li>
+  <li role="presentation"><a href="#">改</a></li>
+    <li role="presentation"><a href="#">删</a></li>
+</ul>
+<hr>
+    <div class="col-sm-10 col-sm-offset-1">
+        <table border="1" class="table table-bordered">
+            <thead>
+                <tr class="info">
+                    <td>id</td>
+                    <td>表名</td>
+                    <td>来源</td>
+                    <td>操作</td>
+                </tr>
+            </thead>
+            {% for table in table1s %}
+                <tr>
+                    <td>{{ table.id }}</td>
+                    <td>{{ table.table_name }}</td>
+                    <td>{{ table.table_src }}</td>
+                    <td><a href="#">修改</a>|<a href="#">删除</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+</body>
+</html>

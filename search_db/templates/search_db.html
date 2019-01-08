@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>搜索</title>
+	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="col-sm-6 col-sm-offset-3">
+<h2>查询，查询，查询！</h2>
+<form method="POST" action="{{ url_for('search_db') }}" class="form-inline" >
+    {{ search_form.hidden_tag() }}
+    {{ search_form.search }}
+    {{ search_form.kind }}
+    {{ search_form.submmit }}
+</form>
+
+<br>
+{% for msg in get_flashed_messages() %}
+    <strong style="color: red">{{ msg }}</strong>
+{% endfor %}
+<hr>
+<table border="1" class="table table-bordered">
+    <thead>
+        <tr class="info">
+            <td><strong>来源</strong></td>
+            <td><strong>用户</strong></td>
+            <td><strong>密码</strong></td>
+            <td><strong>邮箱</strong></td>
+        </tr>
+    </thead>
+    {% for result_key,result_value in results.items() %}
+        {% for result in result_value %}
+        <tr>
+            <td>{{ result_key }}</td>
+            <td>{{ result.username }}</td>
+            <td>{{ result.password }}</td>
+            <td>{{ result.email }}</td>
+        </tr>
+        {% endfor %}
+    {% endfor %}
+</table>
+</div>
+<div class="col-sm-2">
+    <a href="{{ url_for('index') }}">logout</a>&nbsp;&nbsp;
+    <a href="{{ url_for('admin_db_query') }}">后台</a><br>
+    你的IP是:<{{ ip }}><br>
+    不要乱搞呦！
+</div>
+</body>
+</html>
