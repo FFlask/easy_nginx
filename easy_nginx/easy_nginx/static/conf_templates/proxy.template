@@ -1,0 +1,18 @@
+upstream {{outside_web_domain}} { {% for inside_web1 in inside_webs %}
+	server {{inside_web1.ip}}:{{inside_web1.port}};{% endfor %}
+}
+
+server {
+    listen {{ outside_web_port }};
+    server_name {{outside_web_domain}};
+    access_log /var/log/nginx/{{outside_web_domain}}_access.log;
+    error_log /var/log/nginx/{{outside_web_domain}}_error.log;
+    location / {
+        proxy_set_header Host $host:$server_port;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header REMOTE-HOST $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_pass http://{{outside_web_domain}};
+    }
+
+}

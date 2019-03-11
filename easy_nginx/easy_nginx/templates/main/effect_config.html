@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  
+  <head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.0</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+    <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="./lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./js/xadmin.js"></script>
+      	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  
+  <body>
+    <div class="x-body">
+      <blockquote class="layui-elem-quote">每个tr 上有两个属性 cate-id='1' 当前分类id fid='0' 父级id ,顶级分类为 0，有子分类的前面加收缩图标<i class="layui-icon x-show" status='true'>&#xe623;</i></blockquote>
+      <table class="layui-table layui-form">
+        <thead>
+          <tr>
+            <th width="25">命名</th>
+            <th width="150">预提交的配置</th>
+            <th width="25">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for modified_outside_web1_name,modified_outside_web1 in modified_outside_webs_dict.items() %}
+            <tr>
+                <td>{{ modified_outside_web1_name }}</td>
+                <td>
+                    	<div class="panel-group" id="accordion">
+	<div class="panel panel-info">
+		<div class="panel-heading">
+			<h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion"
+				   href="#collapseFour{{ modified_outside_web1_name }}">
+					{{ modified_outside_web1.filename }}
+				</a>
+			</h4>
+		</div>
+		<div id="collapseFour{{ modified_outside_web1_name }}" class="panel-collapse collapse">
+			<div class="panel-body">
+                {{ modified_outside_web1.file | safe }}
+			</div>
+		</div>
+	</div>
+</div>
+                </td>
+                <td><button class="layui-btn layui-btn layui-btn-xs" onclick="x_admin_show('配置比对','{{ url_for("main.get_compare_file",id=modified_outside_web1.id ) }}')" >查看与老配置对比</button></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    <form class="layui-form" action="{{ url_for('main.effect_config') }}" method="post">
+        {{ csrf_token.hidden_tag() }}
+        <input class="layui-btn" id="submmit" lay-filter="send" lay-submit="" name="submmit" type="submit" value="Send" >
+    </form>
+    </div>
+    <style type="text/css">
+      
+    </style>
+    <script>
+        layui.use(['form','layer'], function(){
+            $ = layui.jquery;
+          var form = layui.form
+          ,layer = layui.layer;
+
+          //监听提交
+          form.on('submit(send)', function(data){
+            console.log(data);
+            //发异步，把数据提交给php
+              alert('发送成功');
+              var index = parent.layer.getFrameIndex(window.name);
+              parent.layer.close(index);
+          });
+
+      });
+
+    </script>
+    <script>var _hmt = _hmt || []; (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();</script>
+  <script>
+      	$(function () { $('#collapseFour').collapse({
+		toggle: false
+	})});
+	$(function () { $('#collapseTwo').collapse('show')});
+	$(function () { $('#collapseThree').collapse('toggle')});
+	$(function () { $('#collapseOne').collapse('hide')});
+  </script>
+  </body>
+
+</html>
